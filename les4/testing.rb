@@ -29,9 +29,9 @@ trains = [
     Train.new("FastBoiii", "cargo", 500),
     Train.new("SpaceInvader3000", "cargo", 20),
 ]
-trains[0].assign_route(routes[0])
-trains[1].assign_route(routes[1])
-trains[2].assign_route(routes[2])
+trains[0].route = routes[0]
+trains[1].route = routes[1]
+trains[2].route = routes[2]
 
 
 def trains_info(trains)
@@ -47,6 +47,16 @@ def trains_info(trains)
     end
 end
 
+def trains_info_short(trains)
+    trains.each do |train|
+        puts "\n#{train.format_id}"
+        puts "  #{train.format_previous_station}"
+        puts "  #{train.format_current_station}"
+        puts "  #{train.format_next_station}"
+        puts
+    end
+end
+
 def trains_go(trains)
     trains.each do |train|
         train.to_next_station
@@ -54,24 +64,30 @@ def trains_go(trains)
 end
 
 def third_train_update(trains, routes)
-    if trains[2].current_station != trains[2].route.last
+    if trains[2].route
         return
     end
 
-    if trains[2].route == routes[2]
-        trains[2].assign_route(routes[3])
+    if trains[2].current_station == routes[2].last
+        trains[2].route = routes[3]
     else
-        trains[2].assign_route(routes[2])
+        trains[2].route = routes[2]
     end
 end
 
+
+puts stations["Moskow"].trains_types
+puts stations["Samara"].trains_types
+
+# trains_info(trains)
 
 inp = ""
 while inp != "exit"
     puts "There trains info after one station step:"
 
+    trains_info_short(trains)
+
     trains_go(trains)
-    trains_info(trains)
     third_train_update(trains, routes)
 
     puts "Want another one? (type 'exit' for quit)"

@@ -7,6 +7,7 @@ class Route
         @mid = []
     end
 
+    # Getters
     def first
         @first
     end
@@ -23,7 +24,37 @@ class Route
 
         ret
     end
+    
+    # Logic
+    def add_intermediate(station)
+        if stations.include?(station)
+            return
+        end
 
+        @mid << station
+    end
+
+    def previous_station_from(station)
+        if !station
+            return
+        elsif station == first
+            return
+        end
+        
+        stations[stations.index(station)-1]
+    end
+
+    def next_station_from(station)
+        if !station
+            return
+        elsif station == last
+            return
+        end
+        
+        stations[stations.index(station)+1]
+    end
+    
+    # Formatters
     def format_stations
         ret = ""
 
@@ -32,31 +63,6 @@ class Route
         end
 
         ret
-    end
-
-    def add_intermediate(station)
-        if stations.include?(station)
-            # puts "Log: Station already used."
-            return
-        end
-
-        @mid << station
-    end
-
-    def previous_station_from(station)
-        if station == @first
-            return
-        end
-        
-        stations[stations.index(station)-1]
-    end
-
-    def next_station_from(station)
-        if station == @last
-            return
-        end
-        
-        stations[stations.index(station)+1]
     end
 
 end
