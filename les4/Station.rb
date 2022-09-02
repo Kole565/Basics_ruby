@@ -5,6 +5,20 @@ class Station
 
         @trains = []
     end
+
+    def to_s
+        return "#{name}"
+    end
+
+    def info
+        ret = "Станция #{name}\n"
+        if trains.size == 0
+            return ret
+        end
+        ret += "Поезда:\n"
+        ret += trains.select{ |train| train.to_s }.join("\n")
+        ret
+    end
     
     # Getters
     def name

@@ -1,10 +1,23 @@
 class Route
 
-    def initialize(first, last)
+    def initialize(id, first, last)
+        @id = id
         @first = first
         @last = last
 
         @mid = []
+    end
+
+    def to_s
+        "#{id}"
+    end
+
+    def info
+        ret = "Маршрут '#{id}' #{first.name} - #{last.name}\n"
+        ret += "Станции:\n"
+        ret += format_stations
+        ret += "\n"
+        ret
     end
 
     # Getters
@@ -16,6 +29,10 @@ class Route
         @last
     end
 
+    def id
+        @id
+    end
+
     def stations
         ret = @mid.clone
         
@@ -23,6 +40,10 @@ class Route
         ret.push(@last)
 
         ret
+    end
+
+    def mid
+        @mid
     end
     
     # Logic
@@ -32,6 +53,14 @@ class Route
         end
 
         @mid << station
+    end
+
+    def del_intermediate(station)
+        if !@mid.include?(station)
+            return
+        end
+
+        @mid.delete station
     end
 
     def previous_station_from(station)
@@ -58,8 +87,8 @@ class Route
     def format_stations
         ret = ""
 
-        stations.each do |station|
-            ret += "Name: #{station.name}\n"
+        stations.each_with_index do | station, ind |
+            ret += "#{ind}. #{station.name}\n"
         end
 
         ret

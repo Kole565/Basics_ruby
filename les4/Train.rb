@@ -1,26 +1,45 @@
 class Train
     
-    def initialize(id, type, wagons_amount)
+    def initialize(id, type)
         @id = id
         @type = type
-        @wagons_amount = wagons_amount
-        
+
         @speed = 0
+        @wagons = []
+    end
+
+    def to_s
+        "#{id} #{type.capitalize}"
+    end
+
+    def info
+        ret = "#{id} #{type.capitalize}\n"
+        if !route.nil?
+            ret += "Маршрут #{route.to_s}\n"
+        end
+        if wagons_amount != 0
+            ret += wagons.select { |wagon| wagon.to_s }.join("\n")
+        end
+        ret
     end
 
     # Getters
     def id
         @id
     end
-    
+
     def type
         @type
     end
-    
-    def wagons_amount
-        @wagons_amount
+
+    def wagons
+        @wagons
     end
-    
+
+    def wagons_amount
+        wagons.size
+    end
+
     def speed
         @speed
     end
@@ -28,7 +47,7 @@ class Train
     def route
         @route
     end
-    
+
     def previous_station
         if !route
             return
@@ -38,7 +57,7 @@ class Train
 
         route.previous_station_from(current_station)
     end
-    
+
     def current_station
         @current_station
     end
@@ -54,14 +73,6 @@ class Train
     end
 
     # Setters
-    def wagons_amount=(amount)
-        if amount < 0
-            @wagons_amount = 0
-        else
-            @wagons_amount = amount.to_i
-        end
-    end
-
     def speed=(speed)
         if speed < 0
             @speed = 0
@@ -69,7 +80,7 @@ class Train
             @speed = speed
         end
     end
-    
+
     def route=(route)
         @route = route
         self.current_station = route.first
@@ -83,14 +94,14 @@ class Train
         @current_station = station
         station.receive_train(self)
     end
-    
+
     # Logic
     def accelerate(inc)
         if inc <= 0
             # puts "Log: Don't use 'accelerate' method with negative increment. Use 'brake' instead."
             return
         end
-        
+
         self.speed += inc
     end
 
@@ -98,20 +109,26 @@ class Train
         self.speed -= dec
     end
 
-    def join_wagon
+    def join_wagon(wagon)
         if speed != 0
             return
         end
+        if wagon.type != type
+            return
+        end
 
-        self.wagons_amount += 1
+        self.wagons.append(wagon)
     end
 
     def unjoin_wagon
         if speed != 0
             return
         end
+        if wagons_amount == 0
+            return
+        end
 
-        self.wagons_amount -= 1
+        self.wagons.pop
     end
 
     def to_previous_station
@@ -120,7 +137,7 @@ class Train
         elsif current_station == route.first
             return
         end
-        
+
         accelerate(100)
         self.current_station = route.previous_station_from(current_station)
         brake(1000)
@@ -136,7 +153,7 @@ class Train
         if current_station.trains.include? self
             current_station.delete_train self
         end
-        
+
         accelerate(100)
         self.current_station = route.next_station_from(current_station)
         brake(1000)
