@@ -1,34 +1,35 @@
-class Station
+require_relative "modules/InstanceCounter"
+
+class Statione
+    extend InstanceCounter
+    attr_reader :name, :trains
+
+    @@instances = []
 
     def initialize(name)
         @name = name
 
         @trains = []
+        @@instances << self
     end
 
     def to_s
-        return "#{name}"
+        "#{name}"
+    end
+
+    def all
+        @@instances
     end
 
     def info
         ret = "Станция #{name}\n"
-        if trains.size == 0
-            return ret
-        end
+        return ret if trains.size == 0
+
         ret += "Поезда:\n"
-        ret += trains.select{ |train| train.to_s }.join("\n")
+        ret += trains.select { |train| train.to_s }.join("\n")
         ret
     end
-    
-    # Getters
-    def name
-        @name
-    end
 
-    def trains
-        @trains
-    end
-    
     def trains_types
         ret = "Trains on #{name} station:\n"
 
@@ -53,7 +54,7 @@ class Station
     end
 
     def launch_train(train)
-        if !train.next_station
+        unless train.next_station
             # puts "Log: Train can't be launched. No next station."
             return
         end
@@ -65,5 +66,4 @@ class Station
     def delete_train(train)
         @trains.delete(train)
     end
-
 end

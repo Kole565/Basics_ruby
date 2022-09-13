@@ -1,8 +1,12 @@
 require_relative "modules/Manufacture"
+require_relative "modules/InstanceCounter"
 
 class Train
+    extend InstanceCounter
     extend Manufacture
     attr_reader :id, :type, :wagons, :speed, :route, :current_station
+
+    @@instances = []
 
     def initialize(id, type)
         @id = id
@@ -10,10 +14,15 @@ class Train
 
         @speed = 0
         @wagons = []
+        @@instances << self
     end
 
     def to_s
         "#{id} #{type.capitalize}"
+    end
+
+    def find(id)
+        @@instances.select { |train| train.id = id }
     end
 
     def info

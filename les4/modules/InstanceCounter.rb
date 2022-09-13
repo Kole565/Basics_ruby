@@ -4,4 +4,8 @@ module InstanceCounter
     def register_instance
         @@instances += 1
     end
+
+    def instances
+        @@instances
+    end
 end
