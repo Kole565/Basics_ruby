@@ -1,4 +1,8 @@
+require_relative "modules/Manufacture"
+
 class Wagon
+    extend Manufacture
+    attr_reader :id, :type
 
     def initialize(id, type)
         @id = id
@@ -8,14 +12,4 @@ class Wagon
     def to_s
         "#{id}"
     end
-
-    # Getters
-    def id
-        @id
-    end
-
-    def type
-        @type
-    end
-
 end

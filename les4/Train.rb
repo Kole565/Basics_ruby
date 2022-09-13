@@ -1,5 +1,9 @@
+require_relative "modules/Manufacture"
+
 class Train
-    
+    extend Manufacture
+    attr_reader :id, :type, :wagons, :speed, :route, :current_station
+
     def initialize(id, type)
         @id = id
         @type = type
@@ -14,38 +18,13 @@ class Train
 
     def info
         ret = "#{id} #{type.capitalize}\n"
-        if !route.nil?
-            ret += "Маршрут #{route.to_s}\n"
-        end
-        if wagons_amount != 0
-            ret += wagons.select { |wagon| wagon.to_s }.join("\n")
-        end
+        ret += "Маршрут #{route}\n" unless route.nil?
+        ret += wagons.select { |wagon| wagon.to_s }.join("\n") if wagons_amount != 0
         ret
-    end
-
-    # Getters
-    def id
-        @id
-    end
-
-    def type
-        @type
-    end
-
-    def wagons
-        @wagons
     end
 
     def wagons_amount
         wagons.size
-    end
-
-    def speed
-        @speed
-    end
-
-    def route
-        @route
     end
 
     def previous_station
@@ -56,10 +35,6 @@ class Train
         end
 
         route.previous_station_from(current_station)
-    end
-
-    def current_station
-        @current_station
     end
 
     def next_station
@@ -74,11 +49,11 @@ class Train
 
     # Setters
     def speed=(speed)
-        if speed < 0
-            @speed = 0
-        else
-            @speed = speed
-        end
+        @speed = if speed < 0
+                     0
+                 else
+                     speed
+                 end
     end
 
     def route=(route)
@@ -110,25 +85,17 @@ class Train
     end
 
     def join_wagon(wagon)
-        if speed != 0
-            return
-        end
-        if wagon.type != type
-            return
-        end
+        return if speed != 0
+        return if wagon.type != type
 
-        self.wagons.append(wagon)
+        wagons.append(wagon)
     end
 
     def unjoin_wagon
-        if speed != 0
-            return
-        end
-        if wagons_amount == 0
-            return
-        end
+        return if speed != 0
+        return if wagons_amount == 0
 
-        self.wagons.pop
+        wagons.pop
     end
 
     def to_previous_station
@@ -150,17 +117,13 @@ class Train
             return
         end
 
-        if current_station.trains.include? self
-            current_station.delete_train self
-        end
+        current_station.delete_train self if current_station.trains.include? self
 
         accelerate(100)
         self.current_station = route.next_station_from(current_station)
         brake(1000)
 
-        if current_station == route.last
-            route_ended
-        end
+        route_ended if current_station == route.last
     end
 
     def route_ended
@@ -170,9 +133,7 @@ class Train
 
     # Formatters
     def format_id
-        if id
-            "Train id: #{id}"
-        end
+        "Train id: #{id}" if id
     end
 
     def format_speed
@@ -192,21 +153,14 @@ class Train
     end
 
     def format_previous_station
-        if previous_station
-            "Previous station is: #{previous_station.name}"
-        end
+        "Previous station is: #{previous_station.name}" if previous_station
     end
 
     def format_current_station
-        if current_station
-            "Current station is: #{current_station.name}."
-        end
+        "Current station is: #{current_station.name}." if current_station
     end
 
     def format_next_station
-        if next_station
-            "Next station is: #{next_station.name}."
-        end
+        "Next station is: #{next_station.name}." if next_station
     end
-
 end
