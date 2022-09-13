@@ -1,0 +1,11 @@
+Style/Encoding:
+    Enabled: true
+
+Layout/IndentationWidth:
+    Width: 4
+
+Style/StringLiterals:
+    EnforcedStyle: double_quotes
+    SupportedStyles:
+        - single_quotes
+        - double_quotes
